@@ -12,7 +12,7 @@ from html import unescape
 class TextPreprocessor:
     """
     Text preprocessing for sentiment analysis.
-    
+
     Parameters
     ----------
     lowercase : bool, default=True
@@ -32,7 +32,7 @@ class TextPreprocessor:
     remove_extra_spaces : bool, default=True
         Remove extra whitespace
     """
-    
+
     def __init__(self, lowercase=True, remove_urls=True, remove_html=True,
                  remove_mentions=False, remove_hashtags=False,
                  remove_punctuation=False, remove_numbers=False,
@@ -45,16 +45,16 @@ class TextPreprocessor:
         self.remove_punctuation = remove_punctuation
         self.remove_numbers = remove_numbers
         self.remove_extra_spaces = remove_extra_spaces
-    
+
     def preprocess(self, text):
         """
         Preprocess single text.
-        
+
         Parameters
         ----------
         text : str
             Input text
-        
+
         Returns
         -------
         cleaned : str
@@ -62,51 +62,51 @@ class TextPreprocessor:
         """
         if not isinstance(text, str):
             return ""
-        
+
         # HTML entities
         if self.remove_html:
             text = unescape(text)
             text = re.sub(r'<[^>]+>', '', text)
-        
+
         # URLs
         if self.remove_urls:
             text = re.sub(r'http\S+|www\.\S+', '', text)
-        
+
         # Mentions
         if self.remove_mentions:
             text = re.sub(r'@\w+', '', text)
-        
+
         # Hashtags
         if self.remove_hashtags:
             text = re.sub(r'#\w+', '', text)
-        
+
         # Numbers
         if self.remove_numbers:
             text = re.sub(r'\d+', '', text)
-        
+
         # Lowercase
         if self.lowercase:
             text = text.lower()
-        
+
         # Punctuation
         if self.remove_punctuation:
             text = text.translate(str.maketrans('', '', string.punctuation))
-        
+
         # Extra spaces
         if self.remove_extra_spaces:
             text = re.sub(r'\s+', ' ', text).strip()
-        
+
         return text
-    
+
     def preprocess_batch(self, texts):
         """
         Preprocess batch of texts.
-        
+
         Parameters
         ----------
         texts : list of str
             Input texts
-        
+
         Returns
         -------
         cleaned : list of str
@@ -118,12 +118,12 @@ class TextPreprocessor:
 def clean_text_for_bert(text):
     """
     Minimal cleaning for BERT (BERT handles most preprocessing).
-    
+
     Parameters
     ----------
     text : str
         Input text
-    
+
     Returns
     -------
     cleaned : str
@@ -131,10 +131,10 @@ def clean_text_for_bert(text):
     """
     # Remove excessive newlines
     text = re.sub(r'\n+', ' ', text)
-    
+
     # Remove excessive spaces
     text = re.sub(r'\s+', ' ', text).strip()
-    
+
     return text
 
 
@@ -157,12 +157,12 @@ def remove_emojis(text):
 def normalize_contractions(text):
     """
     Expand English contractions.
-    
+
     Parameters
     ----------
     text : str
         Input text
-    
+
     Returns
     -------
     expanded : str
@@ -219,25 +219,25 @@ def normalize_contractions(text):
         "you're": "you are",
         "you've": "you have"
     }
-    
+
     # Create pattern from contractions
     pattern = re.compile(r'\b(' + '|'.join(contractions.keys()) + r')\b', re.IGNORECASE)
-    
+
     def replace(match):
         return contractions[match.group(0).lower()]
-    
+
     return pattern.sub(replace, text)
 
 
 def extract_features(text):
     """
     Extract text features for analysis.
-    
+
     Parameters
     ----------
     text : str
         Input text
-    
+
     Returns
     -------
     features : dict
